@@ -42,3 +42,7 @@ From this directory. Maven builds `api` first, then compiles and tests
   you want it running.
 
 See the Lab 6 handout on the course page for the three milestones you show a TA.
+
+## Tools used
+
+Claude Code, with Claude Sonnet 5.5 (model id `claude-sonnet-5-5`), for the code changes in milestones 1 and 2 and for drafting the milestone 1 and 2 predictions.
