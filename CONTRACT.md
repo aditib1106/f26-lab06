@@ -13,8 +13,20 @@ Keep it short and specific. Point at methods, call sites, and error text.
 
 **Will the consumer, untouched, still compile and pass?** Yes or no.
 
+**Prediction: Yes.**
+
 **Why.** What does the compiler do with the consumer's existing call sites once
 the new overload exists?
+
+The new overload has five parameters (`roomId, start, end, waitlistKey, notes`).
+The consumer's two call sites, `FrontDesk.bookWalkIn` (`createBooking(roomId,
+startMinute, endMinute, null)`) and `FrontDesk.joinWaitlist` (`createBooking(
+roomId, startMinute, endMinute, guestName)`), pass four arguments. Overload
+resolution filters by arity first, so only the existing four-argument method is
+applicable and both call sites resolve to it exactly as before. The literal
+`null` cannot be ambiguous because there is only one four-argument candidate.
+`getNotes()` is a new getter the consumer never calls. Nothing in the javadoc
+contract becomes false for an existing caller, so behavior is unchanged too.
 
 ### What happened
 
@@ -34,10 +46,24 @@ to an API still breaks a caller, if you can name one.
 **Will the untouched consumer still compile and pass?** Yes or no, and if no,
 which module goes red and whether at compile time or test time.
 
+**Prediction: No.** `consumer` goes red at compile time, before any of its
+tests run. Removing `createBooking(String, long, long, String)` in favor of
+`createBooking(BookingRequest)` means the old signature no longer exists, so
+javac reports a "no suitable method found" / "cannot find symbol" error.
+
 **Where.** Name the call sites you expect to be affected, if any.
+
+Both `createBooking` calls in `consumer/.../FrontDesk.java`: `bookWalkIn` and
+`joinWaitlist`. The other calls (`listBookings`, `cancelBooking`) are untouched.
 
 **What about the tests in `api/`, after you update them?** And whether their
 result is evidence about the consumer.
+
+All 5 `api/` tests should pass once they are rewritten to the new call. That
+result is not evidence about the consumer: the api suite never touches the
+consumer module, and it was rewritten by me to match my own change. It can only
+show the producer agrees with itself. Only the consumer's build can detect that
+the contract broke for an outside caller.
 
 ### Step 1: after the fold
 
