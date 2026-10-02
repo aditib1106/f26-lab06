@@ -105,7 +105,7 @@ consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:27: error: method 
 consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:33: error: method createBooking in interface BookingApi cannot be applied to given types;
         return api.createBooking(roomId, startMinute, endMinute, guestName);
   required: BookingRequest
-  found:    String,long,long,<null>
+  found:    String,long,long,String
   reason: actual and formal argument lists differ in length
 2 errors
 ```
