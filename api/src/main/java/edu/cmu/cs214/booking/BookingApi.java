@@ -62,6 +62,39 @@ public interface BookingApi {
     Booking createBooking(BookingRequest request);
 
     /**
+     * Books a room for the half-open range {@code [startMinute, endMinute)},
+     * waitlisting on conflict when {@code waitlistKey} is non-null.
+     *
+     * <p>Behaves exactly as it did in version 0 and as
+     * {@link #createBooking(BookingRequest)} does for the equivalent request.
+     *
+     * @deprecated use {@link #createBooking(BookingRequest)}; this delegates to
+     *             it with {@code BookingRequest.of(roomId, startMinute,
+     *             endMinute).withWaitlistKey(waitlistKey)}
+     */
+    @Deprecated
+    default Booking createBooking(String roomId, long startMinute, long endMinute,
+                                  String waitlistKey) {
+        return createBooking(
+                BookingRequest.of(roomId, startMinute, endMinute).withWaitlistKey(waitlistKey));
+    }
+
+    /**
+     * Same as the four-argument {@code createBooking}, and also records
+     * free-text notes on the booking.
+     *
+     * @deprecated use {@link #createBooking(BookingRequest)}; this delegates to
+     *             it with {@code BookingRequest.of(roomId, startMinute,
+     *             endMinute).withWaitlistKey(waitlistKey).withNotes(notes)}
+     */
+    @Deprecated
+    default Booking createBooking(String roomId, long startMinute, long endMinute,
+                                  String waitlistKey, String notes) {
+        return createBooking(BookingRequest.of(roomId, startMinute, endMinute)
+                .withWaitlistKey(waitlistKey).withNotes(notes));
+    }
+
+    /**
      * Returns every non-cancelled booking for one room, ordered by start minute.
      *
      * <p>Both CONFIRMED and WAITLISTED bookings are included; CANCELLED
