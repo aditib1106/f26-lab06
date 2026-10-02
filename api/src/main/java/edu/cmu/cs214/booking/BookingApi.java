@@ -26,12 +26,12 @@ public interface BookingApi {
      * booking is CONFIRMED and holds the room.
      *
      * <p>If some CONFIRMED booking does overlap, what happens next is decided
-     * by {@code waitlistKey}:
+     * by the request's waitlist key:
      * <ul>
-     *   <li>{@code waitlistKey} null means do not waitlist on conflict. No
+     *   <li>a null waitlist key means do not waitlist on conflict. No
      *       booking is created and the method returns null. Nothing about the
      *       room's schedule changes.</li>
-     *   <li>{@code waitlistKey} non-null means waitlist on conflict. A booking
+     *   <li>a non-null waitlist key means waitlist on conflict. A booking
      *       is created with status WAITLISTED, carrying the key, and returned.
      *       It does not hold the room. It becomes CONFIRMED only if it is later
      *       promoted, which happens when a conflicting booking is cancelled
@@ -47,41 +47,19 @@ public interface BookingApi {
      * <p>Ids are assigned by the implementation, are unique, and increase in
      * creation order.
      *
-     * @param roomId      the room to book, non-null
-     * @param startMinute first minute of the booking, inclusive
-     * @param endMinute   first minute after the booking, exclusive; must be
-     *                    greater than {@code startMinute}
-     * @param waitlistKey caller's waitlist key, or null to decline waitlisting
-     * @return the CONFIRMED booking, the WAITLISTED booking, or null when the
-     *         range conflicts and no waitlist key was given
-     * @throws IllegalArgumentException if {@code roomId} is null or
-     *         {@code endMinute} is not greater than {@code startMinute}
-     */
-    Booking createBooking(String roomId, long startMinute, long endMinute,
-                          String waitlistKey);
-
-    /**
-     * Same as {@link #createBooking(String, long, long, String)}, and also
-     * records free-text notes on the booking.
+     * <p>The request's notes are free text. They are stored and handed back on
+     * {@link Booking#getNotes()} and have no effect on conflicts, waitlisting or
+     * promotion. Null notes mean no notes.
      *
-     * <p>Notes are opaque to this API: they are stored and handed back on
-     * {@link Booking#getNotes()}, and have no effect on conflicts, waitlisting
-     * or promotion. A null {@code notes} means no notes. Every other rule,
-     * return value and exception is exactly that of the four-argument method.
-     *
-     * @param roomId      the room to book, non-null
-     * @param startMinute first minute of the booking, inclusive
-     * @param endMinute   first minute after the booking, exclusive; must be
-     *                    greater than {@code startMinute}
-     * @param waitlistKey caller's waitlist key, or null to decline waitlisting
-     * @param notes       free-text notes, or null for none
+     * @param request the room, range, optional waitlist key and optional notes;
+     *                the room id must be non-null and the end minute greater
+     *                than the start minute
      * @return the CONFIRMED booking, the WAITLISTED booking, or null when the
-     *         range conflicts and no waitlist key was given
-     * @throws IllegalArgumentException if {@code roomId} is null or
-     *         {@code endMinute} is not greater than {@code startMinute}
+     *         range conflicts and the request has no waitlist key
+     * @throws IllegalArgumentException if {@code request} is null, its room id
+     *         is null, or its end minute is not greater than its start minute
      */
-    Booking createBooking(String roomId, long startMinute, long endMinute,
-                          String waitlistKey, String notes);
+    Booking createBooking(BookingRequest request);
 
     /**
      * Returns every non-cancelled booking for one room, ordered by start minute.
