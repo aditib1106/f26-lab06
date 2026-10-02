@@ -39,8 +39,16 @@ api:      no errors, no warnings
 consumer: no errors, no warnings   (FrontDesk.java compiled unchanged)
 ```
 
-Maven output for this commit (`mvn -B test`): _paste here: expect api 5 tests,
-consumer 7 tests, all green._
+Maven output for this commit (`mvn -B test`):
+
+```
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+[INFO] lab06-booking-parent ............................... SUCCESS [  0.260 s]
+[INFO] lab06-api .......................................... SUCCESS [  7.672 s]
+[INFO] lab06-consumer ..................................... SUCCESS [  0.911 s]
+[INFO] BUILD SUCCESS
+```
 
 **If your prediction was wrong,** say what you missed.
 
@@ -110,9 +118,31 @@ consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:33: error: method 
 2 errors
 ```
 
-Maven output for this commit (`mvn -B clean test`): _paste here: expect api
-5 tests green, consumer COMPILATION ERROR at FrontDesk.java:[27,..] and [33,..],
-0 consumer tests run._
+Maven output for this commit (`mvn -B clean test`):
+
+```
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[ERROR] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[27,19] method createBooking in interface edu.cmu.cs214.booking.BookingApi cannot be applied to given types;
+  required: edu.cmu.cs214.booking.BookingRequest
+  found:    java.lang.String,long,long,<nulltype>
+  reason: actual and formal argument lists differ in length
+[ERROR] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[33,19] method createBooking in interface edu.cmu.cs214.booking.BookingApi cannot be applied to given types;
+  required: edu.cmu.cs214.booking.BookingRequest
+  found:    java.lang.String,long,long,java.lang.String
+  reason: actual and formal argument lists differ in length
+[INFO] lab06-booking-parent ............................... SUCCESS [  0.198 s]
+[INFO] lab06-api .......................................... SUCCESS [  2.631 s]
+[INFO] lab06-consumer ..................................... FAILURE [  0.145 s]
+[INFO] BUILD FAILURE
+[ERROR] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[27,19] method createBooking in interface edu.cmu.cs214.booking.BookingApi cannot be applied to given types;
+[ERROR]   required: edu.cmu.cs214.booking.BookingRequest
+[ERROR]   found:    java.lang.String,long,long,<nulltype>
+[ERROR]   reason: actual and formal argument lists differ in length
+[ERROR] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[33,19] method createBooking in interface edu.cmu.cs214.booking.BookingApi cannot be applied to given types;
+[ERROR]   required: edu.cmu.cs214.booking.BookingRequest
+[ERROR]   found:    java.lang.String,long,long,java.lang.String
+[ERROR]   reason: actual and formal argument lists differ in length
+```
 
 **Which module's tests ran, and which did not.** And what that tells you about
 who can detect a contract break.
@@ -145,8 +175,18 @@ From `javac -Xlint:all` on the consumer (no changes to `consumer/`):
 consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:27: warning: [deprecation] createBooking(String,long,long,String) in BookingApi has been deprecated
 ```
 
-Maven output for this commit (`mvn -B clean test`): _paste here: expect both
-modules green and the same `[deprecation]` warning from the consumer's compile._
+Maven output for this commit (`mvn -B clean test`):
+
+```
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[WARNING] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[27,19] createBooking(java.lang.String,long,long,java.lang.String) in edu.cmu.cs214.booking.BookingApi has been deprecated
+[WARNING] consumer/src/main/java/edu/cmu/cs214/frontdesk/FrontDesk.java:[33,19] createBooking(java.lang.String,long,long,java.lang.String) in edu.cmu.cs214.booking.BookingApi has been deprecated
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+[INFO] lab06-booking-parent ............................... SUCCESS [  0.233 s]
+[INFO] lab06-api .......................................... SUCCESS [  2.728 s]
+[INFO] lab06-consumer ..................................... SUCCESS [  0.988 s]
+[INFO] BUILD SUCCESS
+```
 
 **What the deprecation path resolves.** Who can now build that could not build
 during step 1, and who is on which schedule.
